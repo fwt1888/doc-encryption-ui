@@ -1,10 +1,14 @@
-package core;
+package core.utils;
+
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 public class DESUtils {
-
     //密钥算法
     private static final String KEY_ALGORITHM = "DES";
 
@@ -26,6 +30,8 @@ public class DESUtils {
         byte[] bytes = cipher.doFinal(str.getBytes("utf-8"));
         return  bytes;
     }
+    
+    
     /**使用DES对数据解密
      * @param bytes utf8编码的二进制数据
      * @param key 密钥（8字节）
@@ -39,7 +45,25 @@ public class DESUtils {
         bytes = cipher.doFinal(bytes);
         return new String(bytes, "utf-8");
     }
+    
+    public static String desKeyGeneration() throws NoSuchAlgorithmException {
+    	// 创建一个伪随机数生成器并提供种子
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.setSeed(System.currentTimeMillis()); // 使用当前时间作为种子
 
+        // 创建DES密钥生成器
+        KeyGenerator keyGenerator = KeyGenerator.getInstance("DES");
+        keyGenerator.init(secureRandom);
+
+        // 生成DES密钥
+        SecretKey secretKey = keyGenerator.generateKey();
+
+        // 获取生成的密钥的字节数组
+        byte[] keyBytes = secretKey.getEncoded();
+
+		return ByteUtils.bytesToHex(keyBytes);
+    	
+    }
+
+    
 }
-
-

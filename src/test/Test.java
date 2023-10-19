@@ -1,6 +1,6 @@
 package test;
 
-import core.DESUtils;
+import core.utils.DESUtils;
 
 public class Test {
 	public static void testEncrypt() throws Exception{
