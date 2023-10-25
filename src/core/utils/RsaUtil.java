@@ -33,8 +33,7 @@ public class RsaUtil {
 		return keyPair;
 	}
 	
-	public static byte[] rsaEncrypt(byte[] bytes, Key key) throws NoSuchAlgorithmException,
-		NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
+	public static byte[] rsaEncrypt(byte[] bytes, Key key) throws Exception {
 		
 		Cipher cipher = Cipher.getInstance("RSA");
 		cipher.init(Cipher.ENCRYPT_MODE, key);
@@ -42,8 +41,7 @@ public class RsaUtil {
         return cipher.doFinal(bytes);
 	}
 	
-	public static byte[] rsaDecrypt(byte[] bytes, Key key) throws NoSuchAlgorithmException, NoSuchPaddingException, 
-		InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+	public static byte[] rsaDecrypt(byte[] bytes, Key key) throws Exception {
 		
 		Cipher cipher = Cipher.getInstance("RSA");
 		cipher.init(Cipher.DECRYPT_MODE, key);
@@ -65,5 +63,7 @@ public class RsaUtil {
 		return publicKey.getModulus();
 	}
 	
-
+	public static void setPrivateKey(RSAPrivateKey rk) {
+		privateKey = rk;
+	}
 }
