@@ -13,4 +13,5 @@ public class StringUtil {
 		
 		return new String(bytes, "UTF-8");
 	}
+	
 }

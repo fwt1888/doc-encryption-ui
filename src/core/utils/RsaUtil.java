@@ -1,12 +1,13 @@
 package core.utils;
 
+import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -16,8 +17,8 @@ import javax.crypto.NoSuchPaddingException;
 public class RsaUtil {
 	
 	private static int KEY_SIZE = 2048;
-	private static PrivateKey privateKey = null;
-	public static PublicKey publicKey = null;
+	private static RSAPrivateKey privateKey = null;
+	public static RSAPublicKey publicKey = null;
 	
 	public static KeyPair rsaKeyGeneration() throws NoSuchAlgorithmException {
 		 // 创建RSA密钥对生成器
@@ -26,8 +27,8 @@ public class RsaUtil {
 
         // 生成RSA密钥对
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
-        privateKey = keyPair.getPrivate();
-        publicKey = keyPair.getPublic();
+        privateKey = (RSAPrivateKey) keyPair.getPrivate();
+        publicKey = (RSAPublicKey) keyPair.getPublic();
         
 		return keyPair;
 	}
@@ -54,6 +55,14 @@ public class RsaUtil {
 	public static Key getPrivateKey() {
 
 		return privateKey;
+	}
+	
+	/**
+	 * 获取 生成密钥 随机选取的模数n
+	 * @return
+	 */
+	public static BigInteger getModulus() {
+		return publicKey.getModulus();
 	}
 	
 
