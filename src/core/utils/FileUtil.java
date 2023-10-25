@@ -6,6 +6,22 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class FileUtil {
+	
+	public static String FOLDER_FOR_DATA_STORAGE = null;
+	public static String FOLDER_FOR_KEYSTORE = null;
+	
+	/**
+	 * 在代码执行目录中创建.crypt_data文件夹，用来存储系统数据
+	 * 在.crypt_data下创建crypt.setting
+	 * 在.crypt_data下创建keystore文件夹
+	 */
+	static {
+		FOLDER_FOR_DATA_STORAGE = getExecutionDirectory() + "/.crypt_data";
+		FOLDER_FOR_KEYSTORE = FOLDER_FOR_DATA_STORAGE + "/keystore";
+		createDataFolder(FOLDER_FOR_DATA_STORAGE);
+		createDataFolder(FOLDER_FOR_KEYSTORE);
+	}
+	
 	public static byte[] readBytesFromFile(String filePath) throws IOException {
         FileInputStream fis = new FileInputStream(filePath);
         byte[] buffer = new byte[fis.available()];
@@ -26,12 +42,8 @@ public class FileUtil {
 		return newPath;
 	}
 
-	/**
-	 * 在代码执行目录中创建.crypt_data文件夹，用来存储系统数据
-	 */
-    public static void createDataFolder() {
-        String folderPath = getExecutionDirectory() + "/.crypt_data";
 
+    public static void createDataFolder(String folderPath) {
         File folder = new File(folderPath);
 
         // 检查文件夹是否存在，如果不存在则创建
@@ -60,8 +72,9 @@ public class FileUtil {
         File executionDirectory = new File(classLocation).isDirectory() ? 
         		new File(classLocation) : new File(classLocation).getParentFile();
         
-        return executionDirectory.getAbsolutePath();
+        String absoluteExeDir = executionDirectory.getAbsolutePath();
+        System.out.println("Execution Dir: " + absoluteExeDir);
+        return absoluteExeDir;
     }
-
 
 }
