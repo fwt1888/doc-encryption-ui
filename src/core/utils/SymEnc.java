@@ -9,6 +9,11 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+/**
+ * 对称加密 <- 大数据, 需要设置缓冲区
+ * @author fwt1888
+ *
+ */
 public class SymEnc {
     //密钥算法
     private static String KEY_ALGORITHM = "DES";

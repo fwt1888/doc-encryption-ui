@@ -33,6 +33,13 @@ public class RsaUtil {
 		return keyPair;
 	}
 	
+	/**
+	 * 少量数据，不需要设置缓冲区
+	 * @param bytes
+	 * @param key
+	 * @return
+	 * @throws Exception
+	 */
 	public static byte[] rsaEncrypt(byte[] bytes, Key key) throws Exception {
 		
 		Cipher cipher = Cipher.getInstance("RSA");
