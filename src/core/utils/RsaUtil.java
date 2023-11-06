@@ -1,18 +1,21 @@
 package core.utils;
 
 import java.math.BigInteger;
-import java.security.InvalidKeyException;
+
 import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
-import javax.crypto.BadPaddingException;
+
+
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
+
+import org.bouncycastle.jcajce.provider.asymmetric.rsa.BCRSAPrivateCrtKey;
+
 
 public class RsaUtil {
 	
@@ -72,5 +75,31 @@ public class RsaUtil {
 	
 	public static void setPrivateKey(RSAPrivateKey rk) {
 		privateKey = rk;
+	}
+	
+	/**
+	 * 获取大素数 p
+	 * @return
+	 */
+	public static BigInteger getP() {
+		BCRSAPrivateCrtKey privateCrtKey = (BCRSAPrivateCrtKey) privateKey;
+        return privateCrtKey.getPrimeP();
+	}
+	
+	/**
+	 * 获取大素数 q
+	 * @return
+	 */
+	public static BigInteger getQ() {
+		BCRSAPrivateCrtKey privateCrtKey = (BCRSAPrivateCrtKey) privateKey;
+        return privateCrtKey.getPrimeQ();
+	}
+	
+	public static String getPrivateKeyString() {
+		return "( " + privateKey.getPrivateExponent() + " , " + getModulus() + " )";
+	}
+	
+	public static String getPublicKeyString() {
+		return "( " + publicKey.getPublicExponent() + " , " + getModulus() + " )";
 	}
 }

@@ -1,5 +1,7 @@
 package core.utils;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -20,13 +22,14 @@ public class SymEnc {
 
     //加密算法/工作模式/填充方式
     private static String CIPHER_ALGORITHM = "DES/ECB/PKCS5Padding";
+    private static int BUFFER_SIZE = 8192; //块处理默认缓冲区大小 8kb
     
     //对称加密 密钥
     private static byte[] symKeyBytes = null;
     private static Key symKey = null;
     
 
-    /**对比特流加密
+    /**对字符串加密
      * @param key 密钥(比特流)
      * @return 加密结果
      * @throws Exception
@@ -40,6 +43,41 @@ public class SymEnc {
         Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(symKeyBytes, KEY_ALGORITHM));
         return cipher.doFinal(bytes);
+    }
+    
+    
+    /**
+     * 对文件加密
+     */
+    public static void symEncrypt(String inputFile, String outputFile) throws Exception {
+    	
+    	// 先生成密钥
+    	symKeyGeneration();
+    	
+    	// 再加密
+        Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
+        cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(symKeyBytes, KEY_ALGORITHM));
+        
+    	FileInputStream inputFileStream = new FileInputStream(inputFile);
+        FileOutputStream outputFileStream = new FileOutputStream(outputFile);
+        // 创建8KB的数据缓冲区
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int bytesRead;
+        // 逐块读取、加密和写入数据
+        while ((bytesRead = inputFileStream.read(buffer)) != -1) {
+            byte[] encryptedBytes = cipher.update(buffer, 0, bytesRead);
+            outputFileStream.write(encryptedBytes);
+        }
+        // 处理可能的剩余数据块
+        byte[] finalBytes = cipher.doFinal();
+        outputFileStream.write(finalBytes);
+
+        // 关闭文件流
+        inputFileStream.close();
+        outputFileStream.close();
+
+        System.out.println("Encryption completed.");
+
     }
     
     
@@ -101,4 +139,7 @@ public class SymEnc {
 		return symKeyBytes;
 	}
     
+	public static void changeBufferSize(int newBufferSize) {
+		BUFFER_SIZE = newBufferSize;
+	}
 }

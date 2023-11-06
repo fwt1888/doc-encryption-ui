@@ -14,17 +14,15 @@ import java.security.interfaces.RSAPublicKey;
 
 public class KeyManager {
 	
-	private static String keystoreDir = ".";
-	private static String keystoreName = "keystore";
     private static char[] keystorePassword = "aTiansKeyStore".toCharArray();
     private static KeyStore keyStore = null;
+ 
 	
     /**
      * 保存 keystore 到文件
      * @throws Exception
      */
-	public static void saveKeyStoreFile() throws Exception{
-		String keystorePath = keystoreDir + "/" + keystoreName + ".jks";
+	public static void saveKeyStoreFile(String keystorePath) throws Exception{
         FileOutputStream fos = new FileOutputStream(keystorePath);
         keyStore.store(fos, keystorePassword);
         fos.close();
@@ -41,9 +39,8 @@ public class KeyManager {
 	 * 获取已有keystore保存的信息
 	 * @throws Exception
 	 */
-	public static void readKeyStoreFile() throws Exception {
+	public static void readKeyStoreFile(String keystorePath) throws Exception {
 		 clearKeyStore();
-		 String keystorePath = keystoreDir + keystoreName + ".jks";
 		 keyStore = KeyStore.getInstance("JKS");
 		 
 		 try {
@@ -62,16 +59,16 @@ public class KeyManager {
 		keyStore = null;
 	}
 
-	/**
-	 * 改变keystore存放的目录路径
-	 */
-	public static void changeKeystoreDir(String newDir) {
-		keystoreDir = newDir;
-	}
-	
-	public static void changeKeystoreName(String newName) {
-		keystoreName = newName;
-	}
+//	/**
+//	 * 改变keystore存放的目录路径
+//	 */
+//	public static void changeKeystoreDir(String newDir) {
+//		keystoreDir = newDir;
+//	}
+//	
+//	public static void changeKeystoreName(String newName) {
+//		keystoreName = newName;
+//	}
 	
 	/**
 	 * 根据 传递的密钥对 初始化待保存的 keystore
