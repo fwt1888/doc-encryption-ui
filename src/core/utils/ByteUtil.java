@@ -63,4 +63,16 @@ public class ByteUtil {
 		return mergeByteArrays(bytesToAdd, originBytes);
 	}
 	
+	/**
+	 * 获取长度字段保存的int值
+	 * @return
+	 */
+	public static int getLengthField(int byteLength, byte[] bytes) {
+		
+		byte[] lengthField = new byte[byteLength];
+		System.arraycopy(bytes, 0, lengthField, 0, byteLength);
+		return byteArrayToInt(lengthField);
+		
+	}
+	
 }

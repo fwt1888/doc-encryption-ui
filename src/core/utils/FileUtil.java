@@ -76,5 +76,25 @@ public class FileUtil {
         System.out.println("Execution Dir: " + absoluteExeDir);
         return absoluteExeDir;
     }
+    
+    public static String getFileExtension(String filePath) {
+        if (filePath != null) {
+            int lastDotIndex = filePath.lastIndexOf(".");
+            if (lastDotIndex >= 0) {
+                return filePath.substring(lastDotIndex);
+            }
+        }
+        return null; // 没有找到文件后缀
+    }
+  
+    /**
+     * 删除开始的部分比特
+     */
+    public static byte[] removePartFromArray(int byteLength, byte[] bytes) {
+    	int totalLength = bytes.length;
+    	byte[] newBytes = new byte[totalLength - byteLength];
+    	System.arraycopy(bytes, byteLength, newBytes, 0, byteLength);
+    	return newBytes;
+    }
 
 }
