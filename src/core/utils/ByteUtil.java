@@ -75,4 +75,14 @@ public class ByteUtil {
 		
 	}
 	
+    /**
+     * 删除开始的部分比特
+     */
+    public static byte[] removePartFromArray(int byteLength, byte[] bytes) {
+    	int totalLength = bytes.length;
+    	byte[] newBytes = new byte[totalLength - byteLength];
+    	System.arraycopy(bytes, byteLength, newBytes, 0, byteLength);
+    	return newBytes;
+    }
+	
 }

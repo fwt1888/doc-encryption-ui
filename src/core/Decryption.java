@@ -41,39 +41,47 @@ public class Decryption {
 	 * 对比特流解密
 	 * @param bytes
 	 * @return
+	 * @throws Exception 
 	 */
-	public static byte[] decrypt(byte[] bytes) {
+	public static byte[] decrypt(byte[] bytes) throws Exception {
 		
 		// 组合2: 加密后的组合1 + 加密后的symKey
 		// 获取symKey长度
 		int skLength = ByteUtil.getLengthField(4, bytes);
 		byte[] encSKB = new byte[skLength];
-		System.arraycopy(bytes,);
+		// 获取K
+		System.arraycopy(bytes,4,encSKB,0,skLength);
+		// 删除K长度字段 + k
+		bytes = ByteUtil.removePartFromArray(4 + skLength, bytes);
 		
-		// 对明文HASH进行私钥签名
-		byte[] hash = HashUtil.getHash(bytes);
-		byte[] signedHash = RsaUtil.rsaEncrypt(hash, sender.getPrivateKey());
+		// receiver 私钥 解密K
+		SymEnc.setSymKeyBytes(
+				RsaUtil.rsaDecrypt(encSKB, receiver.getPrivateKey()));
 		
-		// 组合1: 明文 + 签名后的HASH(MAC)
-		byte[] c1 = ByteUtil.mergeByteArrays(bytes, signedHash);
+		// K解密 明文 + MAC
+		byte[] m = SymEnc.symDecrypt(bytes);
 		
-		// 对组合1进行对称加密
-		byte[] encryptedC1 = SymEnc.symEncrypt(c1);
+		// 获取MAC长度 + MAC
+		int macLength = ByteUtil.getLengthField(4, m);
+		byte[] encMAC = new byte[macLength];
+		System.arraycopy(m, 4, encMAC, 0, macLength);
 		
-		// 对称加密密钥获取
-		byte[] symKeyBytes = SymEnc.getKeyBytes();
+		// 删除MAC长度字段 + MAC
+		m = ByteUtil.removePartFromArray(4 + macLength, bytes);
 		
-		// 对symKey进行公钥加密
-		byte[] encryptedSKB = RsaUtil.rsaEncrypt(symKeyBytes, receiver.publicKey);
+		// 明文计算HASH
+		byte[] hashFromM = HashUtil.getHash(m);
 		
+		// sender 公钥 验证MAC
+		byte[] hashFromMAC = RsaUtil.rsaDecrypt(encMAC, 
+				sender.publicKey);
 		
-		byte[] c2 = ByteUtil.mergeByteArrays(encryptedC1, encryptedSKB);
+		if (hashFromM.equals(hashFromMAC)) {
+			return m;
+		}
+
 		
-		return c2;
-		
-		
-		
-		return bytes;
+		return null;
 		
 	}
 	
@@ -83,17 +91,56 @@ public class Decryption {
 	 */
     public static Boolean decrypt(String filePath) {
     	try {
+    		byte[] bytes = FileUtil.readBytesFromFile(filePath);
+			// 获取后缀
+	//		String extension = FileUtil.getFileExtension(filePath);
+			String tempFile1 = FileUtil.renameFile(filePath,"tmp1");
+			String tempFile2 = FileUtil.renameFile(filePath,"tmp2");
     		
+    		// 获取symKey长度
+    		int skLength = ByteUtil.getLengthField(4, bytes);
+    		byte[] encSKB = new byte[skLength];
+    		// 获取K
+    		System.arraycopy(bytes,4,encSKB,0,skLength);
+    		// 删除K长度字段 + k
+    		bytes = ByteUtil.removePartFromArray(4 + skLength, bytes);
     		
+    		// receiver 私钥 解密K
+    		SymEnc.setSymKeyBytes(
+    				RsaUtil.rsaDecrypt(encSKB, receiver.getPrivateKey()));
     		
+    		// K解密 明文 + MAC
+    		FileUtil.writeBytesToFile(tempFile1, bytes);
+    		SymEnc.symDecrypt(tempFile1, tempFile2);
+    		byte[] m = FileUtil.readBytesFromFile(tempFile2);
     		
+    		// 获取MAC长度 + MAC
+    		int macLength = ByteUtil.getLengthField(4, m);
+    		byte[] encMAC = new byte[macLength];
+    		System.arraycopy(m, 4, encMAC, 0, macLength);
+    		
+    		// 删除MAC长度字段 + MAC
+    		m = ByteUtil.removePartFromArray(4 + macLength, bytes);
+    		String finalFile = FileUtil.renameFile(filePath, "dec");
+			FileUtil.writeBytesToFile(finalFile, m);
+    		
+    		// 明文计算HASH
+    		byte[] hashFromM = HashUtil.getHash(finalFile);
+    		
+    		// sender 公钥 验证MAC
+    		byte[] hashFromMAC = RsaUtil.rsaDecrypt(encMAC, 
+    				sender.publicKey);
+        	if (hashFromM.equals(hashFromMAC)) {
+    			return true;
+    		}
+        	else {
+        		return false;
+        	}
     		
     	}catch(Exception e) {
     		System.out.println(e);
     		return false;
     	}
-		return true;
-    	
     }
    
 }

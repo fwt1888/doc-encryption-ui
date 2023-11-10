@@ -87,13 +87,51 @@ public class SymEnc {
      * @return 解密结果
      * @throws Exception
      */
-    public static String symDecrypt(byte[] bytes) throws Exception {
+    public static byte[] symDecrypt(byte[] bytes) throws Exception {
         if (bytes == null || symKey == null) return null;
         Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(symKeyBytes, KEY_ALGORITHM));
         bytes = cipher.doFinal(bytes);
-        return new String(bytes, "utf-8");
+        return bytes;
     }
+    
+    /**
+     * 对文件进行解密
+     * @param inputFile
+     * @param outputFile
+     * @return
+     */
+    public static byte[] symDecrypt(String inputFile, String outputFile) throws Exception {
+        Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
+        cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(symKeyBytes, KEY_ALGORITHM));
+        
+    	FileInputStream inputFileStream = new FileInputStream(inputFile);
+        FileOutputStream outputFileStream = new FileOutputStream(outputFile);
+        // 创建8KB的数据缓冲区
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int bytesRead;
+        // 逐块读取、解密和写入数据
+        while ((bytesRead = inputFileStream.read(buffer)) != -1) {
+            byte[] decryptedBytes = cipher.update(buffer, 0, bytesRead);
+            outputFileStream.write(decryptedBytes);
+        }
+        // 处理可能的剩余数据块
+        byte[] finalBytes = cipher.doFinal();
+        outputFileStream.write(finalBytes);
+
+        // 关闭文件流
+        inputFileStream.close();
+        outputFileStream.close();
+
+        System.out.println("Decryption completed.");
+    	
+    	
+		return symKeyBytes;
+    	
+    }
+    
+    
+    
     
     /**
      * 对称加密密钥生成
@@ -127,6 +165,11 @@ public class SymEnc {
     	KEY_ALGORITHM = encAlgo;
     	CIPHER_ALGORITHM = encAlgo + "/" + encMode + "/" + padMode;
     	
+    }
+    
+    public static void setSymKeyBytes(byte[] bytes) {
+    	
+    	symKeyBytes = bytes;
     }
 
 
