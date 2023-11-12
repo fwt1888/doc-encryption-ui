@@ -20,6 +20,8 @@ public class FileUtil {
 		FOLDER_FOR_KEYSTORE = FOLDER_FOR_DATA_STORAGE + "/keystore";
 		createDataFolder(FOLDER_FOR_DATA_STORAGE);
 		createDataFolder(FOLDER_FOR_KEYSTORE);
+		createDataFolder(FOLDER_FOR_KEYSTORE + "/pk");
+		createDataFolder(FOLDER_FOR_KEYSTORE + "/rk");
 	}
 	
 	public static byte[] readBytesFromFile(String filePath) throws IOException {
@@ -50,12 +52,12 @@ public class FileUtil {
         if (!folder.exists()) {
             boolean created = folder.mkdir(); // 创建文件夹
             if (created) {
-                System.out.println("文件夹创建成功");
+//                System.out.println("文件夹创建成功");
             } else {
-                System.out.println("无法创建文件夹");
+//                System.out.println("无法创建文件夹");
             }
         } else {
-            System.out.println("文件夹已经存在");
+//            System.out.println("文件夹已经存在");
         }
     }
     /**
@@ -85,6 +87,11 @@ public class FileUtil {
             }
         }
         return null; // 没有找到文件后缀
+    }
+    
+    public static boolean fileExists(String filePath) {
+        File file = new File(filePath);
+        return file.exists() && file.isFile();
     }
   
 

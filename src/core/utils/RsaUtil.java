@@ -60,7 +60,7 @@ public class RsaUtil {
 		
 	}
 
-	public static Key getPrivateKey() {
+	public static RSAPrivateKey getPrivateKey() {
 
 		return privateKey;
 	}

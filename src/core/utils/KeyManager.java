@@ -1,20 +1,29 @@
 package core.utils;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.security.cert.Certificate;
 import java.security.Key;
+import java.security.KeyFactory;
 import java.security.KeyStore;
-import java.security.KeyStore.Entry;
 import java.security.KeyStore.PasswordProtection;
 import java.security.KeyStore.SecretKeyEntry;
+
 import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
+import java.security.spec.KeySpec;
+import java.security.spec.PKCS8EncodedKeySpec;
 
-
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Base64;
 
 public class KeyManager {
 	
     private static char[] keystorePassword = "aTiansKeyStore".toCharArray();
+    
+    // store private key ( public key -> pem )
     private static KeyStore keyStore = null;
  
 	
@@ -58,17 +67,6 @@ public class KeyManager {
 	public static void clearKeyStore() {
 		keyStore = null;
 	}
-
-//	/**
-//	 * 改变keystore存放的目录路径
-//	 */
-//	public static void changeKeystoreDir(String newDir) {
-//		keystoreDir = newDir;
-//	}
-//	
-//	public static void changeKeystoreName(String newName) {
-//		keystoreName = newName;
-//	}
 	
 	/**
 	 * 根据 传递的密钥对 初始化待保存的 keystore
@@ -77,11 +75,11 @@ public class KeyManager {
 	public static void initKeyStore() throws Exception{
 		keyStore = KeyStore.getInstance("JKS");
         keyStore.load(null, null);
-
+        
+        Certificate[] virtualCertArray = new Certificate[1];
+	    
         keyStore.setKeyEntry("private_key", RsaUtil.getPrivateKey(), 
-        		"RK".toCharArray(), null); 
-        keyStore.setKeyEntry("public_key", RsaUtil.publicKey, 
-        		"PK".toCharArray(), null);
+        		"RK".toCharArray(), virtualCertArray); 
 	}
 	
 	/**
@@ -94,13 +92,71 @@ public class KeyManager {
 		PasswordProtection keyProtection = new PasswordProtection("RK".toCharArray());
         SecretKeyEntry rkEntry = (SecretKeyEntry)keyStore.getEntry(alias, keyProtection);
         
-        // 获取公钥
-        alias = "public_key";
-        keyProtection = new PasswordProtection("PK".toCharArray());
-        SecretKeyEntry pkEntry = (SecretKeyEntry)keyStore.getEntry(alias, keyProtection);
-        
         // 赋值至RSAUtil
-        RsaUtil.publicKey = (RSAPublicKey)pkEntry.getSecretKey();
         RsaUtil.setPrivateKey((RSAPrivateKey)rkEntry.getSecretKey());
+        
 	}
+	
+	public static void writeKeyToPemFile(String filePath, Key key) throws Exception {
+		try(FileWriter fileWriter = new FileWriter(filePath)){
+		
+	        // 获取公钥的字节数组
+	        byte[] keyBytes = key.getEncoded();
+	
+	        // 对公钥进行Base64编码
+	        String base64Key = Base64.getEncoder().encodeToString(keyBytes);
+	
+	        // 将Base64编码后的公钥按64个字符一行写入PEM文件
+	        int lineLength = 64;
+	        for (int i = 0; i < base64Key.length(); i += lineLength) {
+	            int endIndex = Math.min(i + lineLength, base64Key.length());
+	            fileWriter.write(base64Key.substring(i, endIndex));
+	            fileWriter.write("\n");
+	        }
+		}
+        
+    }
+   
+
+	public static Key readKeyFromPemFile(String filePath, String keyType) throws Exception {
+		
+		if(FileUtil.fileExists(filePath) == false) {
+			return null;
+		}
+		
+		String algorithm= "RSA";
+	    // 从PEM文件读取Base64编码的密钥
+	    StringBuilder keyBuilder = new StringBuilder();
+	    try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+	        String line;
+	        while ((line = reader.readLine()) != null) {
+	            keyBuilder.append(line);
+	        }
+	    }
+	
+	    // 解码Base64编码的公钥
+	    byte[] keyBytes = Base64.getDecoder().decode(keyBuilder.toString());
+	
+	    // 根据密钥类型构造KeySpec对象
+	    KeySpec keySpec;
+	    KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
+        if ("public".equalsIgnoreCase(keyType)) {
+        	
+            keySpec = new X509EncodedKeySpec(keyBytes);
+            return keyFactory.generatePublic(keySpec);
+            
+        } else if ("private".equalsIgnoreCase(keyType)) {
+        	
+        	// 使用PKCS8EncodedKeySpec创建私钥规范
+            keySpec = new PKCS8EncodedKeySpec(keyBytes);
+            return keyFactory.generatePrivate(keySpec);
+            
+        } else {
+        	
+            throw new IllegalArgumentException("Invalid key type");
+        }
+        
+	}
+
+	
 }

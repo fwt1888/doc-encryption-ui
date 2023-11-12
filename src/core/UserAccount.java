@@ -19,4 +19,14 @@ public class UserAccount {
 		this.privateKey = privateKey;
 	}
 	
+	public void setPrivateKey(Key key) {
+		privateKey = key;
+	}
+	
+	public void printInfo() {
+		System.out.println(name + " : ");
+		System.out.println("pk : " + publicKey);
+		System.out.println("rk : " + privateKey);
+	}
+	
 }

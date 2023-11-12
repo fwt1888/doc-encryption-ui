@@ -39,6 +39,8 @@ public class SymEnc {
     	// 先生成密钥
     	symKeyGeneration();
     	
+    	System.out.println("Sym Key for Encrypt: " + ByteUtil.byteArrayToHex(symKeyBytes));
+    	
     	// 再加密
         Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec(symKeyBytes, KEY_ALGORITHM));
@@ -88,11 +90,13 @@ public class SymEnc {
      * @throws Exception
      */
     public static byte[] symDecrypt(byte[] bytes) throws Exception {
+    	
+    	System.out.println("Sym Key for Decrypt: " + ByteUtil.byteArrayToHex(symKeyBytes));
+    	
         if (bytes == null || symKey == null) return null;
         Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(symKeyBytes, KEY_ALGORITHM));
-        bytes = cipher.doFinal(bytes);
-        return bytes;
+        return cipher.doFinal(bytes);
     }
     
     /**

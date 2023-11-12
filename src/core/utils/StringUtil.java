@@ -1,17 +1,23 @@
 package core.utils;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 public class StringUtil {
 	
-	public static byte[] stringToByte(String s) {
-		
-		return s.getBytes();
-	}
-
-	public static String byteToString(byte[] bytes) throws UnsupportedEncodingException {
-		
-		return new String(bytes, "UTF-8");
+	public static byte[] stringToByteArray(String s) {
+		return s.getBytes(StandardCharsets.UTF_8);
 	}
 	
+	public static String byteArrayToString(byte[] bytes) {
+		
+		 StringBuilder hexStringBuilder = new StringBuilder();
+
+	        for (byte b : bytes) {
+	        	int decimalValue = Byte.toUnsignedInt(b);
+	            hexStringBuilder.append((char)decimalValue);
+	        }
+
+	        return hexStringBuilder.toString();
+	}
+
 }
