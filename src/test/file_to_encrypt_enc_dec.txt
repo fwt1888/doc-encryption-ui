@@ -1,0 +1,5 @@
+Hello! =w=
+This is a test file for encryption.
+
+~~~~~If you could see the content above after decryption, 
+it means that the program runs successfully~~~~~

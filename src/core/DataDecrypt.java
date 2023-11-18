@@ -1,5 +1,8 @@
 package core;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 import core.utils.ByteUtil;
@@ -94,7 +97,7 @@ public class DataDecrypt {
 	/**
 	 * 对文件解密
 	 */
-    public static Boolean decrypt(String filePath) {
+    public static String decrypt(String filePath) {
     	try {
     		byte[] bytes = FileUtil.readBytesFromFile(filePath);
 			// 获取后缀
@@ -128,6 +131,12 @@ public class DataDecrypt {
     		m = ByteUtil.removePartFromArray(4 + macLength, m);
     		String finalFile = FileUtil.renameFile(filePath, "dec");
 			FileUtil.writeBytesToFile(finalFile, m);
+			
+			// 删除临时文件
+			Path path1 = Paths.get(tempFile1);
+	        Path path2 = Paths.get(tempFile2);
+	        Files.delete(path1);
+	        Files.delete(path2);
     		
     		// 明文计算HASH
     		byte[] hashFromM = HashUtil.getHash(finalFile);
@@ -135,17 +144,18 @@ public class DataDecrypt {
     		// sender 公钥 验证MAC
     		byte[] hashFromMAC = RsaUtil.rsaDecrypt(encMAC, 
     				sender.publicKey);
-        	if (hashFromM.equals(hashFromMAC)) {
-    			return true;
+        	if (Arrays.equals(hashFromM, hashFromMAC)) {
+    			return finalFile;
     		}
         	else {
-        		return false;
+        		return "MAC verification failed";
         	}
     		
     	}catch(Exception e) {
     		System.out.println(e);
-    		return false;
+    		return null;
     	}
+
     }
     
 	/**

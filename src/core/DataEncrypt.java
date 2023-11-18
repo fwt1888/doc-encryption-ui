@@ -86,7 +86,7 @@ public class DataEncrypt {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Boolean encrypt(String filePath) throws Exception {
+	public static String encrypt(String filePath) throws Exception {
 		
 		try {
 			byte[] bytes = FileUtil.readBytesFromFile(filePath);
@@ -129,12 +129,11 @@ public class DataEncrypt {
 			
 			String finalFile = FileUtil.renameFile(filePath, "enc");
 			FileUtil.writeBytesToFile(finalFile, c2);
+			return finalFile;
 		}catch(Exception e){
 			System.out.println(e);
-			return false;
+			return null;
 		}
-	
-		return true;
 	}
 	
 	

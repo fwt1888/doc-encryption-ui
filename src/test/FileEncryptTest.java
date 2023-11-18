@@ -1,21 +1,20 @@
 package test;
 
+
 import core.DataDecrypt;
 import core.DataEncrypt;
 import core.UserAccount;
 import core.utils.AccountManager;
-import core.utils.ByteUtil;
-import core.utils.StringUtil;
+
 
 public class FileEncryptTest {
 	
-	public void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 		
-		String s = "Hello, world!";
-		System.out.println("M (String) : " + s);
+		String oriFile = "G:\\Codes\\doc-encryption-ui\\src\\test\\file_to_encrypt.txt";
+		System.out.println("Original File : " + oriFile);
 		
 		// new user accounts
-		
 		UserAccount sender = new UserAccount("sender", null, null);
 		UserAccount recevier = new UserAccount("recevier", null, null);
 		
@@ -24,15 +23,13 @@ public class FileEncryptTest {
 		
 		// encrypt
 		DataEncrypt.setSenderAndRecevier(sender, recevier);
-		String encS = DataEncrypt.stringEncrypt(s);
-		System.out.println("Enc (HEX) : " + encS);
+		String encFile = DataEncrypt.encrypt(oriFile);
+		System.out.println("File After Encryption : " + encFile);
 		
 		// decrypt
 		DataDecrypt.setSenderAndRecevier(sender, recevier);
-		String decS = DataDecrypt.stringDecrypt(encS);
-		System.out.println("Dec (HEX) : " + decS);
-		System.out.println("Dec (String) : " + 
-				StringUtil.byteArrayToString(ByteUtil.hexStringToByteArray(decS)));
+		String decFile = DataDecrypt.decrypt(encFile);
+		System.out.println("File After Decryption : " + decFile);
 	}
 	
 }
