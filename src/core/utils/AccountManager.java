@@ -109,5 +109,9 @@ public class AccountManager {
         });
 	}
 	
+	public static void deleteUserAccount(String userName) {
+		userAccounts.remove(userName);		
+	}
+	
 
 }

@@ -194,22 +194,21 @@ public class MainView {
         
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth =1;
+        gbc.gridwidth = 1;
         gbc.gridheight = 1;
         frameLayout.setConstraints(panelLeft, gbc);
         
         gbc.gridx = 1;
         gbc.gridy = 0;
-        gbc.gridwidth =1;
+        gbc.gridwidth = 1;
         gbc.gridheight = 1;
         frameLayout.setConstraints(separator, gbc);
         
         gbc.gridx = 2;
         gbc.gridy = 0;
-        gbc.gridwidth =10;
-        gbc.gridheight = 1;
-        gbc.weighty = 1;
+        gbc.gridwidth = 1;
         gbc.weightx = 1;
+        gbc.weighty = 1;
         frameLayout.setConstraints(panelRight, gbc);
         
         // 选项1
@@ -305,6 +304,12 @@ public class MainView {
         // 使用 revalidate() 和 repaint() 来刷新窗体显示
         frame.revalidate();
         frame.repaint();
+   }
+	 
+	 public static void refreshPanelRight() {
+        // 使用 revalidate() 和 repaint() 来刷新窗体显示
+        MainView.panelRight.revalidate();
+        MainView.panelRight.repaint();
    }
 
 }

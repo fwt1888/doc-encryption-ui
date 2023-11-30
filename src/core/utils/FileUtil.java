@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class FileUtil {
 	
@@ -94,6 +96,16 @@ public class FileUtil {
         return file.exists() && file.isFile();
     }
   
+    public static boolean deleteFile(String filePath) {
+    	try {
+            Files.delete(Paths.get(filePath));
+            System.out.println("File deleted successfully.");
+            return true;
+        } catch (Exception e) {
+            System.err.println("File not found: " + filePath);
+            return false;
+        } 
+    }
 
 
 }
