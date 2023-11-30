@@ -28,10 +28,10 @@ public class MainView {
 	private static int icon_width = 30;
 	private static int icon_height = 30;
 
-	private JFrame frame;
+	private static JFrame frame;
 	
 	// 右边可变区域
-	public JPanel panelRight;
+	public static JPanel panelRight;
 
 	/**
 	 * Launch the application.
@@ -88,8 +88,6 @@ public class MainView {
 		
 		panelRight = new JPanel();
 		panelRight.setBackground(Color.DARK_GRAY);
-		GridBagLayout prLayout = new GridBagLayout();
-		panelRight.setLayout(prLayout);
 
 		// 左边选项卡
 		// 选项1: 身份管理
@@ -104,6 +102,14 @@ public class MainView {
 		button_1.setBackground(Color.DARK_GRAY);
 		button_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				try {
+					AccountView.initAccountView();
+					refreshFrame();
+					System.out.println("== account view ==");
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		
@@ -159,7 +165,7 @@ public class MainView {
 		button_5.setForeground(Color.WHITE);
 		button_5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("1");
+				System.out.println("== about ==");
 			}
 		});
 		
@@ -172,6 +178,10 @@ public class MainView {
 		panelLeft.add(iconLabel_3); panelLeft.add(button_3);
 		panelLeft.add(iconLabel_4); panelLeft.add(button_4);
 		panelLeft.add(iconLabel_5); panelLeft.add(button_5);
+		
+//		// test panel right
+//		JButton test = new JButton("test");
+//		panelRight.add(test);
 
 		
 		// 设置GridBag布局
@@ -182,16 +192,24 @@ public class MainView {
         Insets insets = new Insets(20, 10, 20, 10);
         gbc.insets = insets;
         
-        gbc.weightx = 0.2; // 横向比例
-        gbc.weighty = 1; // 纵向充满
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth =1;
+        gbc.gridheight = 1;
         frameLayout.setConstraints(panelLeft, gbc);
         
-        gbc.weightx = 0.1; // 横向比例
-        gbc.weighty = 1; // 纵向充满
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.gridwidth =1;
+        gbc.gridheight = 1;
         frameLayout.setConstraints(separator, gbc);
         
-        gbc.weightx = 0.9; // 横向比例
-        gbc.weighty = 1.0; // 纵向充满
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        gbc.gridwidth =10;
+        gbc.gridheight = 1;
+        gbc.weighty = 1;
+        gbc.weightx = 1;
         frameLayout.setConstraints(panelRight, gbc);
         
         // 选项1
@@ -200,51 +218,61 @@ public class MainView {
         
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.weightx = 0.3;
+        gbc.gridwidth = 1;
+        gbc.gridheight =1;
         plLayout.setConstraints(iconLabel_1, gbc);
         gbc.gridx = 1;
         gbc.gridy = 0;
-        gbc.weightx = 0.7;
+        gbc.gridwidth = 2;
+        gbc.gridheight =1;
         plLayout.setConstraints(button_1, gbc);
         
         // 选项2
         gbc.gridx = 0;
         gbc.gridy = 1;
-        gbc.weightx = 0.3;
+        gbc.gridwidth = 1;
+        gbc.gridheight =1;
         plLayout.setConstraints(iconLabel_2, gbc);
         gbc.gridx = 1;
         gbc.gridy = 1;
-        gbc.weightx = 0.7;
+        gbc.gridwidth = 2;
+        gbc.gridheight =1;
         plLayout.setConstraints(button_2, gbc);
         
         // 选项3
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.weightx = 0.3;
+        gbc.gridwidth = 1;
+        gbc.gridheight =1;
         plLayout.setConstraints(iconLabel_3, gbc);
         gbc.gridx = 1;
         gbc.gridy = 2;
-        gbc.weightx = 0.7;
+        gbc.gridwidth = 2;
+        gbc.gridheight =1;
         plLayout.setConstraints(button_3, gbc);
         
         // 选项4
         gbc.gridx = 0;
         gbc.gridy = 3;
-        gbc.weightx = 0.3;
+        gbc.gridwidth = 1;
+        gbc.gridheight =1;
         plLayout.setConstraints(iconLabel_4, gbc);
         gbc.gridx = 1;
         gbc.gridy = 3;
-        gbc.weightx = 0.7;
+        gbc.gridwidth = 2;
+        gbc.gridheight =1;
         plLayout.setConstraints(button_4, gbc);
         
         // 选项5
         gbc.gridx = 0;
         gbc.gridy = 4;
-        gbc.weightx = 0.3;
+        gbc.gridwidth = 1;
+        gbc.gridheight =1;
         plLayout.setConstraints(iconLabel_5, gbc);
         gbc.gridx = 1;
         gbc.gridy = 4;
-        gbc.weightx = 0.7;
+        gbc.gridwidth = 2;
+        gbc.gridheight =1;
         plLayout.setConstraints(button_5, gbc);
        
         // 每次程序运行时，自动触发一次button_5
@@ -252,24 +280,31 @@ public class MainView {
 	}
 	
 	 private static void setGlobalFontSize(int size) {
-	        // 获取当前的字体
-	        Font currentFont = UIManager.getFont("Label.font");
+        // 获取当前的字体
+        Font currentFont = UIManager.getFont("Label.font");
 
-	        // 创建新的字体对象，设置字体名称、样式和大小
-	        Font newFont = new Font(currentFont.getName(), currentFont.getStyle(), size);
+        // 创建新的字体对象，设置字体名称、样式和大小
+        Font newFont = new Font(currentFont.getName(), currentFont.getStyle(), size);
 
-	        // 设置全局字体
-	        UIManager.put("Label.font", newFont);
-	        UIManager.put("Button.font", newFont);
-	        // 可以根据需要设置其他组件的字体
+        // 设置全局字体
+        UIManager.put("Label.font", newFont);
+        UIManager.put("Button.font", newFont);
+        // 可以根据需要设置其他组件的字体
 
-	        // 更新UI，使设置生效
-	        SwingUtilities.updateComponentTreeUI(new JFrame());
-	    }
+        // 更新UI，使设置生效
+        SwingUtilities.updateComponentTreeUI(new JFrame());
+    }
 	 
 	 private static void simulateButtonClick(final JButton button) {
-	        // 在 Swing 事件分发线程上模拟按钮点击事件
-	        SwingUtilities.invokeLater(() -> button.doClick());
-	    }
+        // 在 Swing 事件分发线程上模拟按钮点击事件
+        SwingUtilities.invokeLater(() -> button.doClick());
+    }
+	 
+	 
+	 private static void refreshFrame() {
+        // 使用 revalidate() 和 repaint() 来刷新窗体显示
+        frame.revalidate();
+        frame.repaint();
+   }
 
 }

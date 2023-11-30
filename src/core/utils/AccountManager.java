@@ -32,6 +32,9 @@ public class AccountManager {
 		user.publicKey = RsaUtil.publicKey;
 		user.setPrivateKey(RsaUtil.getPrivateKey());
 		
+		user.pkString = RsaUtil.getPublicKeyString();
+		user.setRKString(RsaUtil.getPrivateKeyString());
+		
 		// 保存至.keystore
 //		KeyManager.initKeyStore();
 //		KeyManager.saveKeyStoreFile(rkPath);
@@ -56,6 +59,9 @@ public class AccountManager {
 		
 		user.publicKey = RsaUtil.publicKey;
 		user.setPrivateKey(RsaUtil.getPrivateKey());
+		
+		user.pkString = RsaUtil.getPublicKeyString();
+		user.setRKString(RsaUtil.getPrivateKeyString());
 		
 		return user;
 	}
@@ -87,8 +93,9 @@ public class AccountManager {
                 	RsaUtil.setPrivateKey((RSAPrivateKey)KeyManager.readKeyFromPemFile(rkPath, "private"));              	
                 	
                 	// 登入列表
-                    userAccounts.put(userName,
-                    		new UserAccount(file.getName(),RsaUtil.publicKey,RsaUtil.getPrivateKey()));
+                	UserAccount newUser = new UserAccount(file.getName(),RsaUtil.publicKey,RsaUtil.getPrivateKey());
+                	newUser.generateKeyStrings();
+                    userAccounts.put(userName, newUser);
                 }
             }
         }

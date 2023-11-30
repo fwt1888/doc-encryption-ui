@@ -96,10 +96,10 @@ public class RsaUtil {
 	}
 	
 	public static String getPrivateKeyString() {
-		return "( " + privateKey.getPrivateExponent() + " , " + getModulus() + " )";
+		return "( " + getModulus() + " , " + privateKey.getPrivateExponent() + " )";
 	}
 	
 	public static String getPublicKeyString() {
-		return "( " + publicKey.getPublicExponent() + " , " + getModulus() + " )";
+		return "( " + getModulus() + " , " + publicKey.getPublicExponent() + " )";
 	}
 }
