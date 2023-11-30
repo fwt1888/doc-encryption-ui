@@ -25,8 +25,8 @@ import java.awt.SystemColor;
 
 public class MainView {
 	
-	private static int icon_width = 40;
-	private static int icon_height = 40;
+	private static int icon_width = 30;
+	private static int icon_height = 30;
 
 	private JFrame frame;
 	

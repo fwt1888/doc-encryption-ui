@@ -9,6 +9,7 @@ import core.UserAccount;
 
 public class AccountManager {
 	
+	// string: name
 	public static HashMap<String, UserAccount> userAccounts = null;
 	
 	/**
