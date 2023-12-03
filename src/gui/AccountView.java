@@ -30,6 +30,7 @@ import javax.swing.table.JTableHeader;
 import core.UserAccount;
 import core.utils.AccountManager;
 import core.utils.FileUtil;
+import core.utils.UserSettings;
 
 public class AccountView {
 	
@@ -324,7 +325,7 @@ public class AccountView {
 		
 		AccountManager.deleteUserAccount(userName);
 		
-		if(UserSettings.deleteRealPEMFile == true) {
+		if("y".equals(UserSettings.ifDeleteRealFile)) {
 			
 			// É¾³ýÎÄ¼þ
 			String pkPath = FileUtil.FOLDER_FOR_KEYSTORE + "/pk/" + userName + ".pem";

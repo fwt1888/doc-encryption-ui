@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 
 import core.DataDecrypt;
 import core.DataEncrypt;
+import core.utils.UserSettings;
 
 public class EncryptView {
 	

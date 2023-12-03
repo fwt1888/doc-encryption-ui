@@ -12,11 +12,16 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIDefaults;
 import javax.swing.UIManager;
+
+import core.utils.UserSettings;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.ImageIcon;
 import java.awt.event.ActionListener;
+import java.util.Enumeration;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -42,6 +47,9 @@ public class MainView {
 				try {
 					SwingUtilities.invokeLater(() -> {
 						setGlobalFontSize(13);
+//						setGlobalTextColor(Color.WHITE);
+						UserSettings.readFromFile();
+						UserSettings.changeSettings();
 						MainView window = new MainView();
 						window.frame.setVisible(true);	
 					});	
@@ -172,6 +180,14 @@ public class MainView {
 		button_4.setForeground(Color.WHITE);
 		button_4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				try {
+					SettingView.init();
+					refreshFrame();
+					System.out.println("== setting view ==");
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 
@@ -189,7 +205,9 @@ public class MainView {
 		button_5.setForeground(Color.WHITE);
 		button_5.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("== about ==");
+				AboutView.init();
+				refreshFrame();
+				System.out.println("== about view ==");
 			}
 		});
 		
@@ -335,5 +353,17 @@ public class MainView {
         MainView.panelRight.revalidate();
         MainView.panelRight.repaint();
    }
+	 
+	 // 设置全局文字颜色
+    private static void setGlobalTextColor(Color textColor) {
+        UIDefaults defaults = UIManager.getDefaults();
+        Enumeration<Object> keys = defaults.keys();
+        while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            if (key instanceof String && ((String) key).endsWith(".foreground")) {
+                defaults.put(key, textColor);
+            }
+        }
+    }
 
 }

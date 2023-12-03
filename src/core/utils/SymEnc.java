@@ -37,7 +37,8 @@ public class SymEnc {
     public static byte[] symEncrypt(byte[] bytes) throws Exception {
     	
     	// 先生成密钥
-    	symKeyGeneration();
+    	if("seed".equals(UserSettings.symKey))
+    		symKeyGeneration();
     	
     	System.out.println("Sym Key for Encrypt: " + ByteUtil.byteArrayToHex(symKeyBytes));
     	
@@ -54,7 +55,8 @@ public class SymEnc {
     public static void symEncrypt(String inputFile, String outputFile) throws Exception {
     	
     	// 先生成密钥
-    	symKeyGeneration();
+    	if("seed".equals(UserSettings.symKey))
+    		symKeyGeneration();
     	
     	// 再加密
         Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
@@ -148,7 +150,7 @@ public class SymEnc {
         secureRandom.setSeed(System.currentTimeMillis()); // 使用当前时间作为种子
 
         // 创建DES密钥生成器
-        KeyGenerator keyGenerator = KeyGenerator.getInstance("DES");
+        KeyGenerator keyGenerator = KeyGenerator.getInstance(KEY_ALGORITHM);
         keyGenerator.init(secureRandom);
 
         // 生成DES密钥
@@ -188,5 +190,10 @@ public class SymEnc {
     
 	public static void changeBufferSize(int newBufferSize) {
 		BUFFER_SIZE = newBufferSize;
+	}
+
+
+	public static void setProvidedSymKey(String providedSymKey) {
+		symKeyBytes = StringUtil.stringToByteArray(providedSymKey);	
 	}
 }
