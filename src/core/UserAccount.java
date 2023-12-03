@@ -41,9 +41,13 @@ public class UserAccount {
 	}
 	
 	public void generateKeyStrings() {
-		pkString = "( " + ((RSAPublicKey) publicKey).getModulus() + " , " 
+		if(publicKey != null) {
+			pkString = "( " + ((RSAPublicKey) publicKey).getModulus() + " , " 
 					+ ((RSAPublicKey) publicKey).getPublicExponent() + " )";
-		rkString = "( " + ((RSAPrivateKey) privateKey).getModulus() + " , " 
+		}
+		if(privateKey != null) {
+			rkString = "( " + ((RSAPrivateKey) privateKey).getModulus() + " , " 
 					+ ((RSAPrivateKey) privateKey).getPrivateExponent() + " )";
+		}
 	}
 }

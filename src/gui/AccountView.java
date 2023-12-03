@@ -5,6 +5,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.SystemColor;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -18,6 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JViewport;
 import javax.swing.table.DefaultTableModel;
@@ -30,13 +34,15 @@ import core.utils.FileUtil;
 public class AccountView {
 	
 	private static DefaultTableModel tableModel;
-	public static JScrollPane scrollPane;
+	public static JScrollPane scrollPane_1; // JTable
+	public static JScrollPane scrollPane_2; // JTextArea
 	public static JTextField nameField;
+	public static JTextArea readOnlyField;
 	public static JTable table;
 	public static UserAccount selectedUser; // 鼠标选中的user account
 	public static int selectedRow;
 	
-	public static void initAccountView() throws Exception {
+	public static void init() throws Exception {
 		
 		MainView.panelRight.removeAll();
 		
@@ -50,7 +56,9 @@ public class AccountView {
 		button_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					createUser();
+					String userName = nameField.getText();
+					createUser(userName);
+					readOnlyField.setText("== 已新建身份 " + userName + " ==");
 				} catch (Exception e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -81,7 +89,7 @@ public class AccountView {
 		button_3.setBackground(Color.DARK_GRAY);
 		button_3.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				copyPublicKey();
 			}
 			
 		});
@@ -92,29 +100,39 @@ public class AccountView {
 		button_4.setBackground(Color.DARK_GRAY);
 		button_4.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				try {
+					regenerateKeyPair();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 			
 		});
         
         // JTextField
-		JTextField readOnlyField = new JTextField("目前没有要显示的内容哦~");
+		readOnlyField = new JTextArea("目前没有要显示的内容哦~");
         readOnlyField.setEditable(false);  // 设置为不可编辑
         readOnlyField.setBackground(Color.GRAY);
         readOnlyField.setForeground(Color.WHITE);
+        readOnlyField.setColumns(5); // 设置列数，决定宽度
+        readOnlyField.setLineWrap(true); // 启用自动换行
+//        readOnlyField.setWrapStyleWord(true); // 按单词换行
         
         nameField = new JTextField("此处输入新建身份的Name字段");
         nameField.setBackground(Color.GRAY);
         nameField.setForeground(Color.WHITE);
         
+        scrollPane_2 = new JScrollPane(readOnlyField);
+        
         // 添加进panelRight
-        MainView.panelRight.add(scrollPane);
+        MainView.panelRight.add(scrollPane_1);
         MainView.panelRight.add(button_1);
         MainView.panelRight.add(button_2);
         MainView.panelRight.add(button_3);
         MainView.panelRight.add(button_4);
         MainView.panelRight.add(nameField);
-        MainView.panelRight.add(readOnlyField);
+        MainView.panelRight.add(scrollPane_2);
         
         // 布局
 		GridBagLayout prLayout = new GridBagLayout();
@@ -132,7 +150,7 @@ public class AccountView {
         gbc.gridheight = GridBagConstraints.REMAINDER;
         gbc.weightx = 1;
         gbc.weighty = 1;
-        prLayout.setConstraints(scrollPane, gbc);
+        prLayout.setConstraints(scrollPane_1, gbc);
         
         gbc.gridx = 5;
         gbc.gridy = 0;
@@ -176,7 +194,7 @@ public class AccountView {
         gbc.gridwidth = 4;
         gbc.ipady = 40;
         gbc.weighty = 1.0;
-        prLayout.setConstraints(readOnlyField, gbc);
+        prLayout.setConstraints(scrollPane_2, gbc);
         
 	}
 
@@ -223,10 +241,15 @@ public class AccountView {
                     if (selectedRow != -1) {
                         // 获取选中行的数据
                         String name = table.getValueAt(selectedRow, 0).toString();
-                        selectedUser = new UserAccount(name, null, null);
+                        selectedUser = AccountManager.userAccounts.get(name);
                         
                         // 在控制台输出选中行的数据
                         System.out.println("Selected Row Data: " + name);
+                        
+                        // readOnlyField中显示 Name + PK
+                        String content = "Name : " + name + "\n";
+                        content = content + "Public Key : " + selectedUser.pkString;
+                        readOnlyField.setText(content);
                     }
                 }
             }
@@ -238,9 +261,9 @@ public class AccountView {
         tableHeader.setBackground(Color.DARK_GRAY);
         tableHeader.setForeground(SystemColor.activeCaption);
         // 创建滚动面板
-        scrollPane = new JScrollPane(table);
+        scrollPane_1 = new JScrollPane(table);
 		// 设置 JViewport 的背景色
-        JViewport viewport = scrollPane.getViewport();
+        JViewport viewport = scrollPane_1.getViewport();
         viewport.setBackground(Color.DARK_GRAY);
         
 
@@ -250,8 +273,7 @@ public class AccountView {
 	 * button_1 
 	 * @throws Exception 
 	 */
-	public static void createUser() throws Exception {
-		String userName = nameField.getText();
+	public static void createUser(String userName) throws Exception {
 		System.out.println(userName);
 		AccountManager.userRegist(new UserAccount(userName, null, null));
 		
@@ -269,6 +291,7 @@ public class AccountView {
     		rk = "*****";
     	}
     	
+    	
 		tableModel.addRow(new Vector<>(List.of(userName, pk, rk)));
 		tableModel.fireTableDataChanged();
 //		MainView.refreshPanelRight();
@@ -278,14 +301,19 @@ public class AccountView {
 	 * button_3
 	 */
 	public static void copyPublicKey() {
-		
+		copyToClipboard(selectedUser.pkString);
+		readOnlyField.setText("== 已将 " + selectedUser.name + " 的公钥复制至剪切板 ==");
 	}
 	
 	/**
 	 * button_4
+	 * @throws Exception 
 	 */
-	public static void regenerateKeyPair() {
-		
+	public static void regenerateKeyPair() throws Exception {
+		deleteSelectedRow();
+		String userName = selectedUser.name;
+		createUser(userName);
+		readOnlyField.setText("== 已重新生成身份 " + userName + " 的密钥对 ==");
 	}
 	
 	/**
@@ -309,8 +337,29 @@ public class AccountView {
 		tableModel.removeRow(rowIndex);
 		tableModel.fireTableDataChanged();
 //		MainView.refreshPanelRight();
+		
+		readOnlyField.setText("== 已将身份 " + userName + " 删除 ==");
 	}
 	
+	private static void copyToClipboard(String text) {
+        // 获取系统剪贴板
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+
+        // 创建 StringSelection 对象，用于包装文本
+        StringSelection stringSelection = new StringSelection(text);
+
+        // 将 StringSelection 对象设置到剪贴板
+        clipboard.setContents(stringSelection, null);
+    }
 	
+	 private static void deleteSelectedRow() {
+        // 获取选中的行索引
+        int selectedRow = table.getSelectedRow();
+
+        // 删除选中的行
+        if (selectedRow != -1) {
+            tableModel.removeRow(selectedRow);
+        }
+	 }
 	
 }

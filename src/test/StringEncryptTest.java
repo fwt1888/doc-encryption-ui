@@ -20,8 +20,7 @@ public class StringEncryptTest {
 		UserAccount recevier = new UserAccount("recevier", null, null);
 		
 		sender = AccountManager.userCreate(sender);
-		recevier = AccountManager.userCreate(recevier);
-		
+		recevier = AccountManager.userCreate(recevier);		
 		
 		// encrypt
 		DataEncrypt.setSenderAndRecevier(sender, recevier);

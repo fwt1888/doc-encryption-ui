@@ -103,7 +103,7 @@ public class MainView {
 		button_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					AccountView.initAccountView();
+					AccountView.init();
 					refreshFrame();
 					System.out.println("== account view ==");
 				} catch (Exception e1) {
@@ -123,6 +123,18 @@ public class MainView {
 		JButton button_2 = new JButton("数据加密");
 		button_2.setBackground(Color.DARK_GRAY);
 		button_2.setForeground(Color.WHITE);
+		button_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					EncryptView.init();
+					refreshFrame();
+					System.out.println("== encrypt view ==");
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		
 		// 选项3: 数据解密
 		JLabel iconLabel_3 = new JLabel("");
@@ -134,6 +146,18 @@ public class MainView {
 		JButton button_3 = new JButton("数据解密");
 		button_3.setBackground(Color.DARK_GRAY);
 		button_3.setForeground(Color.WHITE);
+		button_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					DecryptView.init();
+					refreshFrame();
+					System.out.println("== decrypt view ==");
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		
 		// 选项4: 高级设置
 		JLabel iconLabel_4 = new JLabel("");

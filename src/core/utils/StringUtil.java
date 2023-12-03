@@ -10,14 +10,16 @@ public class StringUtil {
 	
 	public static String byteArrayToString(byte[] bytes) {
 		
-		 StringBuilder hexStringBuilder = new StringBuilder();
-
-	        for (byte b : bytes) {
-	        	int decimalValue = Byte.toUnsignedInt(b);
-	            hexStringBuilder.append((char)decimalValue);
-	        }
-
-	        return hexStringBuilder.toString();
+//		 StringBuilder hexStringBuilder = new StringBuilder();
+//
+//	        for (byte b : bytes) {
+//	        	int decimalValue = Byte.toUnsignedInt(b);
+//	            hexStringBuilder.append((char)decimalValue);
+//	        }
+//
+//	        return hexStringBuilder.toString();
+		
+		return new String(bytes, StandardCharsets.UTF_8);
 	}
 
 }

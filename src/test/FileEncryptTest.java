@@ -11,7 +11,7 @@ public class FileEncryptTest {
 	
 	public static void main(String[] args) throws Exception {
 		
-		String oriFile = "G:\\Codes\\doc-encryption-ui\\src\\test\\file_to_encrypt.txt";
+		String oriFile = "src\\test\\file_to_encrypt.txt";
 		System.out.println("Original File : " + oriFile);
 		
 		// new user accounts

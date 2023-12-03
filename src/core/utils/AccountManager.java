@@ -1,6 +1,7 @@
 package core.utils;
 
 import java.io.File;
+import java.nio.ReadOnlyBufferException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.HashMap;
@@ -93,7 +94,7 @@ public class AccountManager {
                 	RsaUtil.setPrivateKey((RSAPrivateKey)KeyManager.readKeyFromPemFile(rkPath, "private"));              	
                 	
                 	// µ«»Î¡–±Ì
-                	UserAccount newUser = new UserAccount(file.getName(),RsaUtil.publicKey,RsaUtil.getPrivateKey());
+                	UserAccount newUser = new UserAccount(userName,RsaUtil.publicKey,RsaUtil.getPrivateKey());
                 	newUser.generateKeyStrings();
                     userAccounts.put(userName, newUser);
                 }
