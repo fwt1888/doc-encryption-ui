@@ -18,7 +18,7 @@ public class FileUtil {
 	 * 在.crypt_data下创建keystore文件夹
 	 */
 	static {
-		FOLDER_FOR_DATA_STORAGE = getExecutionDirectory() + "/.crypt_data";
+		FOLDER_FOR_DATA_STORAGE = System.getProperty("user.dir") + "/.crypt_data";
 		FOLDER_FOR_KEYSTORE = FOLDER_FOR_DATA_STORAGE + "/keystore";
 		createDataFolder(FOLDER_FOR_DATA_STORAGE);
 		createDataFolder(FOLDER_FOR_KEYSTORE);
