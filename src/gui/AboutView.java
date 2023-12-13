@@ -27,8 +27,8 @@ public class AboutView {
 	private static int icon_height = 30;
 	public static JScrollPane sp;
 	
-	public static String url_1 = "https://github.com/fwt1888/doc-encryption-ui";
-	public static String url_2 = "https://www.yuque.com/fwt1888/doc_encryption_ui";
+	public static String url_2 = "https://github.com/fwt1888/doc-encryption-ui";
+	public static String url_1 = "https://www.yuque.com/fwt1888/doc_encryption_ui";
 	
 	public static void init() {
 		MainView.panelRight.removeAll();
